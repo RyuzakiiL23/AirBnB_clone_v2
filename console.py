@@ -73,7 +73,7 @@ class HBNBCommand(cmd.Cmd):
                 pline = pline[2].strip()  # pline is now str
                 if pline:
                     # check for *args or **kwargs
-                    if pline[0] is '{' and pline[-1] is'}'\
+                    if pline[0] is '{' and pline[-1] is '}'\
                             and type(eval(pline)) is dict:
                         _args = pline
                     else:
@@ -116,9 +116,6 @@ class HBNBCommand(cmd.Cmd):
     def do_delete(self, args):
         delete()
 
-
-#Modifications
-
     def do_create(self, args):
         """ Create an object of any class"""
         args_slpit = args.split(" ")
@@ -134,13 +131,12 @@ class HBNBCommand(cmd.Cmd):
         if (len(args_slpit) > 0):
             for j in range(len(args_slpit)-1):
                 k = args_slpit[j+1].split("=")
-                for i in range(0, len(k), 2):
-                    key = k[i]
-                    value = k[i + 1]
-                    value = eval(value)
-                    if type(value) is str:
-                        value = value.replace("_", " ").replace('"', '\\"')
-                    kw[key] = value
+                key = k[0]
+                value = k[1]
+                value = eval(value)
+                if type(value) is str:
+                    value = value.replace("_", " ").replace('"', '\\"')
+                kw[key] = value
 
             new_instance = HBNBCommand.classes[args_slpit[0]]()
             for key, value in kw.items():
@@ -347,6 +343,7 @@ class HBNBCommand(cmd.Cmd):
         """ Help information for the update class """
         print("Updates an object with new information")
         print("Usage: update <className> <id> <attName> <attVal>\n")
+
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
