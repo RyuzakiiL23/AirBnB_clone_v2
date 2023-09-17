@@ -6,10 +6,10 @@ from models.user import User
 from models.place import Place
 from models.review import Review
 from models.amenity import Amenity
-import os
+from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, (create_engine)
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
 from sqlalchemy.orm import sessionmaker
 
 
@@ -19,11 +19,16 @@ class DBStorage:
     __session = None
     def __init__(self):
         """Initialize the class"""
-        self.__engine = create_engine('mysql+mysqldb://HBNB_MYSQL_USER:
-                                      HBNB_MYSQL_PWD@localhost/HBNB_MYSQL_DB',
+        user = getenv("HBNB_MYSQL_USER")
+        passwd = getenv("HBNB_MYSQL_PWD")
+        db = getenv("HBNB_MYSQL_DB")
+        host = getenv("HBNB_MYSQL_HOST")
+        env = getenv("HBNB_ENV")
+        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
+                                      .format(user, passwd, host, db),
                                       pool_pre_ping=True)
 
-        if os.environ.get('HBNB_ENV') == 'test':
+        if env == 'test':
             metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
@@ -38,7 +43,7 @@ class DBStorage:
         else:
             class_list = [State, City, User, Place, Review, Amenity]
             for elmt in class_list:
-                 instances = self.__session.query(elmt).all()
+                instances = self.__session.query(elmt).all()
                 for obj in instances:
                     key = '{}.{}'.format(elmt, obj.id)
                     _dict[key] = obj
