@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-""" State Module for HBNB project """
+""" dbStorage Module for HBNB project """
 from models.state import State
 from models.city import City
 from models.user import User
@@ -9,26 +9,27 @@ from models.amenity import Amenity
 from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy.orm import sessionmaker, scoped_session
 
 
 class DBStorage:
     """class DBStorage"""
     __engine = None
     __session = None
+
     def __init__(self):
         """Initialize the class"""
-        user = getenv("HBNB_MYSQL_USER")
-        passwd = getenv("HBNB_MYSQL_PWD")
+        db_user = getenv("HBNB_MYSQL_USER")
+        db_pwd = getenv("HBNB_MYSQL_PWD")
         db = getenv("HBNB_MYSQL_DB")
-        host = getenv("HBNB_MYSQL_HOST")
-        env = getenv("HBNB_ENV")
-        self.__engine = create_engine('mysql+mysqldb://{}:{}@{}/{}'
-                                      .format(user, passwd, host, db),
-                                      pool_pre_ping=True)
+        db_host = getenv("HBNB_MYSQL_HOST")
+        environment = getenv("HBNB_ENV")
+        connection_url = f"mysql+mysqldb://{db_user}:{db_pwd}@{db_host}/{db}"
 
-        if env == 'test':
+        self.__engine = create_engine(connection_url, pool_pre_ping=True)
+
+        if environment == 'test':
             metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
