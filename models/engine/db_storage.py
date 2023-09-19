@@ -9,7 +9,7 @@ from models.amenity import Amenity
 from os import getenv
 from models.base_model import BaseModel, Base
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy import Column, Integer, String, create_engine
+from sqlalchemy import Column, Integer, String, create_engine, text
 from sqlalchemy.orm import sessionmaker, scoped_session
 
 
@@ -36,19 +36,24 @@ class DBStorage:
         """ method to list all instance as a dictionary"""
         _dict = {}
         if (cls):
-            instances = self.__session.query(cls.__name__).all()
+            if type(cls) is str:
+                cls = eval(cls)
+            instances = self.__session.query(cls).all()
             for obj in instances:
-                key = '{}.{}'.format(cls.__name__, obj.id)
+                if '_sa_instance_state' in obj.__dict__.keys():
+                    del obj.__dict__['_sa_instance_state']
+                key = '{}.{}'.format(type(obj).__name__, obj.id)
                 _dict[key] = obj
-            self.__session.close()
         else:
             class_list = [State, City, User, Place, Review, Amenity]
             for elmt in class_list:
                 instances = self.__session.query(elmt).all()
                 for obj in instances:
+                    if '_sa_instance_state' in obj.__dict__.keys():
+                        del obj.__dict__['_sa_instance_state']
                     key = '{}.{}'.format(elmt, obj.id)
                     _dict[key] = obj
-                self.__session.close()
+        self.__session.close()
         return (_dict)
 
     def new(self, obj):

@@ -28,6 +28,8 @@ class BaseModel:
             kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
             del kwargs['__class__']
+            if '_sa_instance_state' in kwargs.keys():
+                del kwargs['_sa_instance_state']
             self.__dict__.update(kwargs)
 
     def __str__(self):
