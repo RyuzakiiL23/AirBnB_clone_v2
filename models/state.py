@@ -17,7 +17,7 @@ class State(BaseModel, Base):
 
     def cities(self):
         """
-        Getter attribute to retrieve a list of City instances with 
+        Getter attribute to retrieve a list of City instances with
         state_id equals to the current State.id for FileStorage.
         """
         cities = []
