@@ -9,6 +9,7 @@ from datetime import datetime
 
 env.hosts = ["54.175.146.62", "34.224.94.116"]
 
+
 def do_pack():
     """Create a tgz archive from the contents of the web_static folder."""
     try:
@@ -24,6 +25,7 @@ def do_pack():
         return "versions/{}".format(archive_file)
     except Exception:
         return None
+
 
 def do_deploy():
     """
@@ -60,8 +62,9 @@ def do_deploy():
         return False
     return True
 
+
 def deploy():
     archive_path = do_pack()
-        if file is None:
+    if file is None:
         return False
     return do_deploy(archive_path)
