@@ -1,21 +1,33 @@
 #!/usr/bin/python3
-# Fabfile to distribute an archive to a web server.
+# deploy function that integrate do_deploy and do_pack.
 import os.path
 from fabric.api import env
 from fabric.api import put
 from fabric.api import run
+from fabric.api import local
+from datetime import datetime
 
 env.hosts = ["54.175.146.62", "34.224.94.116"]
 
+def do_pack():
+    """Create a tgz archive from the contents of the web_static folder."""
+    try:
+        now = datetime.now()
+        archive_file = "web_static_{}{}{}{}{}{}.tgz".format(
+            now.year, now.month, now.day, now.hour, now.minute, now.second
+        )
 
-def do_deploy(archive_path):
-    """Distributes an archive to a web server.
+        local("mkdir -p versions")
 
-    Args:
-        archive_path (str): The path of the archive to distribute.
-    Returns:
-        If the file doesn't exist at archive_path or an error occurs - False.
-        Otherwise - True.
+        local("tar -czvf versions/{} web_static".format(archive_file))
+
+        return "versions/{}".format(archive_file)
+    except Exception:
+        return None
+
+def do_deploy():
+    """
+    Distributes an archive to a web server.
     """
     if os.path.isfile(archive_path) is False:
         return False
@@ -47,3 +59,9 @@ def do_deploy(archive_path):
            format(name)).failed is True:
         return False
     return True
+
+def deploy():
+    archive_path = do_pack()
+        if file is None:
+        return False
+    return do_deploy(archive_path)
